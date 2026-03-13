@@ -1,0 +1,468 @@
+<Window x:Class="ServerApplication.Views.Client.ClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bilardo Masasi"
+        WindowStyle="None"
+        Topmost="True"
+        WindowState="Maximized"
+        Background="#0D1117" Foreground="White">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        
+        <!-- Inverse Boolean to Visibility Converter for hiding Dashboard -->
+        <Style x:Key="VisibleIfTrue" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsMatchStarted}" Value="True">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="VisibleIfFalse" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsMatchStarted}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Arrow button style -->
+        <Style x:Key="ArrowButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="36"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#30FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#50FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Cafe FAB button style -->
+        <Style x:Key="FabButton" TargetType="Button">
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="35" Background="#4CAF50">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" BlurRadius="15" Opacity="0.5" ShadowDepth="3"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Popup menu item button style -->
+        <Style x:Key="MenuItemButton" TargetType="Button">
+            <Setter Property="Background" Value="#2D333B"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="15,5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4CAF50"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#388E3C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="B" Command="{Binding SwitchTurnCommand}"/>
+    </Window.InputBindings>
+    
+    <Grid>
+        <!-- Status Message Banner -->
+        <Border Background="#80000000" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="5" Panel.ZIndex="100">
+            <TextBlock Text="{Binding InvalidIpMessage}" FontSize="14" FontWeight="Bold" Foreground="Yellow" HorizontalAlignment="Center" />
+        </Border>
+
+        <!-- ============ PRE-MATCH DASHBOARD ============ -->
+        <Grid Style="{StaticResource VisibleIfFalse}" Background="#0D1117" Panel.ZIndex="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ======= SOL PANEL (Saat + Kampanya) ======= -->
+            <Border Grid.Column="0" Background="#161B22" Margin="0" Padding="20">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentDateTimeText}" FontSize="36" FontWeight="Bold" Foreground="#2196F3" TextAlignment="Center" Margin="0,0,0,40"/>
+                    <TextBlock Text="&#x1F3B1;" FontSize="50" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="MASA 1" FontSize="24" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="HAZIRLIK" FontSize="16" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,0,0,60"/>
+                    <Border Background="#1C2128" CornerRadius="12" Padding="15,12">
+                        <StackPanel>
+                            <TextBlock Text="&#x1F31F; KAMPANYA" FontSize="14" FontWeight="Bold" Foreground="#FFD700" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <TextBlock Text="3 Cay + 1 Kahve" FontSize="15" Foreground="White" HorizontalAlignment="Center"/>
+                            <TextBlock Text="70 TL" FontSize="28" FontWeight="ExtraBold" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ======= SAG PANEL (Grid List) ======= -->
+            <Grid Grid.Column="1" Margin="25,25,25,25">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- KART 1: Player A -->
+                <Border Grid.Row="0" Grid.Column="0" Background="#161B22" CornerRadius="16" Margin="8" Padding="25">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#4CAF50" BlurRadius="15" Opacity="0.1" ShadowDepth="0"/>
+                    </Border.Effect>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="&#x1F464; PLAYER A" FontSize="18" FontWeight="Bold" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBox Text="{Binding PlayerAName, UpdateSourceTrigger=PropertyChanged}" 
+                                 FontSize="22" Padding="10" Background="#1C2128" Foreground="White" 
+                                 BorderBrush="#4CAF50" BorderThickness="2" HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="Girilmezse PLAYER A olarak gorunur" FontSize="11" Foreground="#555" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- KART 2: Player B -->
+                <Border Grid.Row="0" Grid.Column="1" Background="#161B22" CornerRadius="16" Margin="8" Padding="25">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#2196F3" BlurRadius="15" Opacity="0.1" ShadowDepth="0"/>
+                    </Border.Effect>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="&#x1F464; PLAYER B" FontSize="18" FontWeight="Bold" Foreground="#2196F3" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBox Text="{Binding PlayerBName, UpdateSourceTrigger=PropertyChanged}" 
+                                 FontSize="22" Padding="10" Background="#1C2128" Foreground="White" 
+                                 BorderBrush="#2196F3" BorderThickness="2" HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="Girilmezse PLAYER B olarak gorunur" FontSize="11" Foreground="#555" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- KART 3: Hedef Sayi + Handikap A -->
+                <Border Grid.Row="1" Grid.Column="0" Background="#161B22" CornerRadius="16" Margin="8" Padding="25">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="&#x1F3C6; HEDEF SAYI" FontSize="16" FontWeight="Bold" Foreground="#FFD700" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                            <Button Content="&#x2212;" Command="{Binding HedefSayiDownCommand}" 
+                                    Width="44" Height="44" FontSize="22" FontWeight="Bold"
+                                    Foreground="#FF6B6B" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                            <TextBlock Text="{Binding HedefSayi}" FontSize="36" FontWeight="ExtraBold" Foreground="White" 
+                                       VerticalAlignment="Center" Width="60" TextAlignment="Center"/>
+                            <Button Content="+" Command="{Binding HedefSayiUpCommand}" 
+                                    Width="44" Height="44" FontSize="22" FontWeight="Bold"
+                                    Foreground="#4CAF50" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                        </StackPanel>
+                        <Border Background="#1C2128" CornerRadius="10" Padding="12,8" Margin="0,5,0,0">
+                            <StackPanel>
+                                <TextBlock Text="&#x1F4A1; HANDIKAP A" FontSize="13" FontWeight="Bold" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="&#x2212;" Command="{Binding HandikapADownCommand}" 
+                                            Width="36" Height="36" FontSize="18" FontWeight="Bold"
+                                            Foreground="#FF6B6B" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                    <TextBlock Text="{Binding HandikapA}" FontSize="26" FontWeight="ExtraBold" Foreground="White" 
+                                               VerticalAlignment="Center" Width="40" TextAlignment="Center"/>
+                                    <Button Content="+" Command="{Binding HandikapAUpCommand}" 
+                                            Width="36" Height="36" FontSize="18" FontWeight="Bold"
+                                            Foreground="#4CAF50" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- KART 4: Masa Notu + Handikap B -->
+                <Border Grid.Row="1" Grid.Column="1" Background="#161B22" CornerRadius="16" Margin="8" Padding="25">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="&#x1F4CB; MASA NOTU" FontSize="16" FontWeight="Bold" Foreground="#888" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding MasaNotu, UpdateSourceTrigger=PropertyChanged}" 
+                                 FontSize="16" Padding="10" Background="#1C2128" Foreground="White" 
+                                 BorderBrush="#444" BorderThickness="1" Height="55"
+                                 TextWrapping="Wrap" AcceptsReturn="False"
+                                 VerticalContentAlignment="Center" Margin="0,0,0,20"/>
+                        <Border Background="#1C2128" CornerRadius="10" Padding="12,8" Margin="0,5,0,0">
+                            <StackPanel>
+                                <TextBlock Text="&#x1F4A1; HANDIKAP B" FontSize="13" FontWeight="Bold" Foreground="#2196F3" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="&#x2212;" Command="{Binding HandikapBDownCommand}" 
+                                            Width="36" Height="36" FontSize="18" FontWeight="Bold"
+                                            Foreground="#FF6B6B" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                    <TextBlock Text="{Binding HandikapB}" FontSize="26" FontWeight="ExtraBold" Foreground="White" 
+                                               VerticalAlignment="Center" Width="40" TextAlignment="Center"/>
+                                    <Button Content="+" Command="{Binding HandikapBUpCommand}" 
+                                            Width="36" Height="36" FontSize="18" FontWeight="Bold"
+                                            Foreground="#4CAF50" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- KART 5: Maci Baslat (Alt, Tam Genislik) -->
+                <Border Grid.Row="2" Grid.ColumnSpan="2" Background="#161B22" CornerRadius="16" Margin="8" Padding="20">
+                    <Button Content="&#x25B6;  MACI BASLAT" Command="{Binding StartMatchCommand}" 
+                            FontSize="30" FontWeight="Bold" Foreground="White" Background="#FF4F4F" 
+                            Padding="40,18" BorderThickness="0" Cursor="Hand" HorizontalAlignment="Center">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="12"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#FF4F4F" BlurRadius="25" Opacity="0.5" ShadowDepth="5"/>
+                        </Button.Effect>
+                    </Button>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ============ MAIN SCOREBOARD LAYOUT ============ -->
+        <Grid Style="{StaticResource VisibleIfTrue}" Margin="0,30,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- ======= PLAYER A (Left) ======= -->
+            <Border Grid.Column="0" Grid.Row="0" Margin="30,20,10,10" CornerRadius="20" Background="#161B22">
+                <Border.Effect>
+                    <DropShadowEffect Color="#4CAF50" BlurRadius="20" Opacity="0.3" ShadowDepth="0"/>
+                </Border.Effect>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding DisplayPlayerAName}" FontSize="32" FontWeight="Bold" Foreground="#4CAF50" Margin="0,0,10,20"/>
+                        <TextBlock Text="&#x1F3B1;" FontSize="26" VerticalAlignment="Center" Margin="0,0,0,20">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActivePlayer}" Value="1">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                    
+                    <!-- Up Arrow -->
+                    <Button Style="{StaticResource ArrowButton}" Content="&#x25B2;" Command="{Binding PlayerAScoreUpCommand}" HorizontalAlignment="Center"/>
+                    
+                    <!-- Score -->
+                    <TextBlock Text="{Binding PlayerAScore}" FontSize="120" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" Margin="0,5"/>
+
+                    <!-- Down Arrow -->
+                    <Button Style="{StaticResource ArrowButton}" Content="&#x25BC;" Command="{Binding PlayerAScoreDownCommand}" HorizontalAlignment="Center"/>
+                    
+                    <!-- Average info -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,25,0,0">
+                        <TextBlock Text="{Binding PlayerAAverageText}" FontSize="20" FontWeight="SemiBold" Foreground="#FFA500" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ======= CENTER DIVIDER AND TUR ======= -->
+            <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100">
+                <TextBlock Text="TUR" FontSize="20" FontWeight="Bold" Foreground="#888" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding TurCount}" FontSize="48" FontWeight="ExtraBold" Foreground="#FFD700" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+                <TextBlock Text="VS" FontSize="30" FontWeight="Bold" Foreground="#555" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- ======= PLAYER B (Right) ======= -->
+            <Border Grid.Column="2" Grid.Row="0" Margin="10,20,30,10" CornerRadius="20" Background="#161B22">
+                <Border.Effect>
+                    <DropShadowEffect Color="#2196F3" BlurRadius="20" Opacity="0.3" ShadowDepth="0"/>
+                </Border.Effect>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="&#x1F3B1;" FontSize="26" VerticalAlignment="Center" Margin="0,0,10,20">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActivePlayer}" Value="2">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding DisplayPlayerBName}" FontSize="32" FontWeight="Bold" Foreground="#2196F3" Margin="0,0,0,20"/>
+                    </StackPanel>
+                    
+                    <!-- Up Arrow -->
+                    <Button Style="{StaticResource ArrowButton}" Content="&#x25B2;" Command="{Binding PlayerBScoreUpCommand}" HorizontalAlignment="Center"/>
+                    
+                    <!-- Score -->
+                    <TextBlock Text="{Binding PlayerBScore}" FontSize="120" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" Margin="0,5"/>
+
+                    <!-- Down Arrow -->
+                    <Button Style="{StaticResource ArrowButton}" Content="&#x25BC;" Command="{Binding PlayerBScoreDownCommand}" HorizontalAlignment="Center"/>
+                    
+                    <!-- Average info -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,25,0,0">
+                        <TextBlock Text="{Binding PlayerBAverageText}" FontSize="20" FontWeight="SemiBold" Foreground="#FFA500" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ======= BOTTOM BAR (Sure + Tutar) ======= -->
+            <Border Grid.Row="1" Grid.ColumnSpan="3" Background="#161B22" CornerRadius="15,15,0,0" Padding="30,12" Margin="30,0,30,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding KalanSureText, FallbackValue='Sure: 00:00:00'}" FontSize="26" FontWeight="Bold" Foreground="#4CAF50" VerticalAlignment="Center"/>
+                    <TextBlock Text="  |  " FontSize="26" Foreground="#444" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ToplamTutar, StringFormat='Toplam: {0:N2} TL', FallbackValue='Toplam: 0.00 TL'}" FontSize="26" FontWeight="Bold" Foreground="#E0E0E0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ============ CAFE FAB BUTTON (Bottom Right) ============ -->
+        <Button Style="{StaticResource FabButton}" Content="&#x2615;" 
+                Command="{Binding ToggleCafePopupCommand}"
+                VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                Margin="0,0,40,80" Panel.ZIndex="150"
+                RenderTransformOrigin="0.5,0.5"/>
+
+        <!-- ============ CAFE POPUP OVERLAY ============ -->
+        <Border Background="#90000000" 
+                Visibility="{Binding IsCafePopupVisible, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                Panel.ZIndex="180">
+            <Border Background="#1C2128" Width="380" CornerRadius="20" Padding="20"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="30" Opacity="0.7" ShadowDepth="5"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Popup Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                        <TextBlock Text="&#x2615; MENU" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <Button Content="&#x2715;" Command="{Binding CloseCafePopupCommand}" 
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                FontSize="22" Foreground="#FF6B6B" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                Width="40" Height="40"/>
+                    </Grid>
+                    
+                    <!-- Popup Menu Items -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" MaxHeight="400">
+                        <ItemsControl ItemsSource="{Binding MenuItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#2D333B" CornerRadius="10" Margin="3,4" Padding="12,8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Urun adi + fiyat -->
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Ad}" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                                                <TextBlock Text="{Binding Fiyat, StringFormat='{}{0} TL'}" FontSize="14" Foreground="#888"/>
+                                            </StackPanel>
+                                            
+                                            <!-- +  Adet  - -->
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <!-- Azalt butonu -->
+                                                <Button Content="&#x2212;" Command="{Binding AzaltCommand}" 
+                                                        IsEnabled="{Binding CanDecrease}"
+                                                        Width="40" Height="40" FontSize="22" FontWeight="Bold"
+                                                        Foreground="#FF6B6B" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                                
+                                                <!-- Adet gostergesi -->
+                                                <TextBlock Text="{Binding Adet}" FontSize="22" FontWeight="Bold" Foreground="White" 
+                                                           VerticalAlignment="Center" HorizontalAlignment="Center" Width="35" TextAlignment="Center"/>
+                                                
+                                                <!-- Arttir butonu -->
+                                                <Button Content="+" Command="{Binding ArttirCommand}" 
+                                                        Width="40" Height="40" FontSize="22" FontWeight="Bold"
+                                                        Foreground="#4CAF50" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Border>
+        
+        <!-- ============ ADMIN EXIT PANEL ============ -->
+        <Border Background="#80000000" Visibility="{Binding IsAdminPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Panel.ZIndex="200">
+            <Border Background="#1C2128" Width="320" Height="220" CornerRadius="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="20" Opacity="0.6" ShadowDepth="3"/>
+                </Border.Effect>
+                <StackPanel Margin="25">
+                    <TextBlock Text="Admin Cikis" FontSize="22" FontWeight="Bold" Foreground="White" Margin="0,0,0,20"/>
+                    <PasswordBox x:Name="txtAdminPassword" PasswordChanged="txtAdminPassword_PasswordChanged" Margin="0,0,0,20" FontSize="16" Padding="5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Cikis Yap" Command="{Binding ExitAppCommand}" Width="110" Height="35" Margin="0,0,10,0"
+                                Background="#FF4F4F" Foreground="White" BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                        <Button Content="Iptal" Command="{Binding CancelAdminPanelCommand}" Width="110" Height="35"
+                                Background="#2D333B" Foreground="White" BorderThickness="0" FontSize="14" Cursor="Hand"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</Window>

@@ -10,4 +10,15 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainViewModel();
     }
+
+    private async void BtnMainMenu_Click(object sender, RoutedEventArgs e)
+    {
+        var app = (App)Application.Current;
+        await app.StopMasterHostAsync();
+        
+        var roleWindow = new ServerApplication.Views.Common.RoleSelectionWindow();
+        roleWindow.Show();
+        
+        this.Close();
+    }
 }

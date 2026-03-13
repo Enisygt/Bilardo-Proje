@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "JtzSjuNE1Ew=",
+  "dgSpecHash": "qwQNfhMZaOc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\KENT\\Desktop\\Proje\\TicariOtomasyon\\SharedLibrary\\SharedLibrary.csproj",
+  "projectFilePath": "C:\\Users\\enisz\\OneDrive\\Desktop\\Bilardo Proje\\Bilardo-Proje\\SharedLibrary\\SharedLibrary.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\KENT\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512"
+    "C:\\Users\\enisz\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512"
   ],
   "logs": []
 }

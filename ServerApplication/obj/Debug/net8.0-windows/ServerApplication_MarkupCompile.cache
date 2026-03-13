@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\KENT\Desktop\Proje\TicariOtomasyon\ServerApplication\obj\Debug\net8.0-windows\
+C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ServerApplication\obj\Debug\net8.0-windows\
 ServerApplication
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-C:\Users\KENT\Desktop\Proje\TicariOtomasyon\ServerApplication\App.xaml
-3-1566109019
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WİNDOWS7_0_OR_GREATER
+C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ServerApplication\App.xaml
+5-536525932
 
-14973053978
-367-484841159
-MainWindow.xaml;Views\CheckoutWindow.xaml;Views\MasaControl.xaml;
+19-213077261
+370-1848429026
+MainWindow.xaml;Views\CheckoutWindow.xaml;Views\Client\ClientWindow.xaml;Views\Common\RoleSelectionWindow.xaml;Views\MasaControl.xaml;
 
 False
 

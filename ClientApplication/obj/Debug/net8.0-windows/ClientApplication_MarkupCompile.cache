@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\KENT\Desktop\Proje\TicariOtomasyon\ClientApplication\obj\Debug\net8.0-windows\
+C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ClientApplication\obj\Debug\net8.0-windows\
 ClientApplication
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-C:\Users\KENT\Desktop\Proje\TicariOtomasyon\ClientApplication\App.xaml
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WİNDOWS7_0_OR_GREATER
+C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ClientApplication\App.xaml
 11407045341
 
 6-2677510
-2181805454298
+2182018760370
 MainWindow.xaml;
 
 False

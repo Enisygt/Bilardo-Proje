@@ -16,18 +16,10 @@ public class CafeHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        var httpContext = Context.GetHttpContext();
-        var ipAddress = httpContext?.Connection.RemoteIpAddress?.ToString();
-
-        if (!string.IsNullOrEmpty(ipAddress))
-        {
-            var masa = await _context.Masalar.FirstOrDefaultAsync(m => m.IpAddress == ipAddress);
-            if (masa != null)
-            {
-                // We'll broadcast logic to clients based on connection
-                await Clients.Caller.SendAsync("TerminalVerified", masa.MasaNo);
-            }
-        }
+        // For simplicity in the new single app architecture, we'll verify all incoming terminals
+        // The terminal will just tell us which table they are (or they will be assigned one)
+        // For now, let's just bypass the strict IP validation and tell them they are verified.
+        await Clients.Caller.SendAsync("TerminalVerified", "Yeni Masa");
 
         await base.OnConnectedAsync();
     }
@@ -51,6 +43,7 @@ public class CafeHub : Hub
             masa.Durum = MasaDurum.Bos;
             await _context.SaveChangesAsync();
             await Clients.All.SendAsync("MasaDurumuDegisti", masa.Id, (int)masa.Durum);
+            await Clients.All.SendAsync("ResetMatch", masa.Id);
         }
     }
 }

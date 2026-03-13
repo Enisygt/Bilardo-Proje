@@ -12,6 +12,7 @@
         <StackPanel Grid.Row="0" Margin="10" Orientation="Horizontal">
             <TextBlock Text="Masa Yönetimi" FontSize="28" FontWeight="Bold"/>
             <Button Content="Masaları Yenile" Command="{Binding RefreshCommand}" Margin="20,0,0,0" Padding="10,5"/>
+            <Button Content="Ana Menüye (Kuruluma) Dön" Click="BtnMainMenu_Click" Margin="20,0,0,0" Padding="10,5" Background="#FF4F4F" Foreground="White"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
