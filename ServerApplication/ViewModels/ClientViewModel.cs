@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using ServerApplication.Services;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace ServerApplication.ViewModels;
 
@@ -23,7 +24,6 @@ public partial class UrunViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CanDecrease))]
     private int _onaylananAdet = 0;
 
-    // Onaylanan adetten daha fazlaysa azaltılabilir
     public bool CanDecrease => Adet > OnaylananAdet;
 
     [RelayCommand]
@@ -45,24 +45,152 @@ public partial class ClientViewModel : ObservableObject
     private HubConnection? _hubConnection;
     private KioskService _kioskService;
     private DispatcherTimer _timer;
+    private int _masaId = 1;
+    private bool _isDemoMode = false;
 
     public ClientViewModel()
     {
         _kioskService = new KioskService();
         _kioskService.AdminPanelRequested += () => IsAdminPanelVisible = true;
+        _kioskService.DemoExitRequested += OnDemoExit;
+
+        var configService = new ConfigurationService();
+        var config = configService.LoadConfig();
+        _masaId = config.MasaId;
+        _isDemoMode = config.IsDemoMode;
+        _kioskService.IsDemoMode = _isDemoMode;
+        SalonAdi = config.SalonAdi;
+        Telefon = config.Telefon;
+        Adres = config.Adres;
+        _kioskService.IsDemoMode = _isDemoMode;
+
         _kioskService.StartKioskMode();
 
-        MenuItems.Add(new UrunViewModel { Id = 1, Ad = "Çay", Fiyat = 15 });
-        MenuItems.Add(new UrunViewModel { Id = 2, Ad = "Kahve", Fiyat = 35 });
-        MenuItems.Add(new UrunViewModel { Id = 3, Ad = "Kola", Fiyat = 40 });
-        MenuItems.Add(new UrunViewModel { Id = 4, Ad = "Su", Fiyat = 10 });
-        MenuItems.Add(new UrunViewModel { Id = 5, Ad = "Meyve Suyu", Fiyat = 30 });
+        // Menü ürünlerini yükle
+        LoadMenuItems();
 
         _timer = new DispatcherTimer { Interval = System.TimeSpan.FromSeconds(1) };
         _timer.Tick += (s, e) => Heartbeat();
         _timer.Start();
 
-        ConnectToServerAsync();
+        if (!_isDemoMode)
+        {
+            ConnectToServerAsync();
+        }
+
+        LoadKampanyalar();
+        _kampanyaTimer = new DispatcherTimer { Interval = System.TimeSpan.FromSeconds(15) };
+        _kampanyaTimer.Tick += (s, e) => RotateKampanya();
+        _kampanyaTimer.Start();
+    }
+
+    private void LoadMenuItems()
+    {
+        try
+        {
+            using var ctx = new ServerApplication.Data.AppDbContext();
+            ctx.Database.EnsureCreated();
+            var urunler = ctx.Urunler.Where(u => u.IsAktif).ToList();
+            foreach (var u in urunler)
+            {
+                MenuItems.Add(new UrunViewModel { Id = u.Id, Ad = u.Ad, Fiyat = u.Fiyat });
+            }
+        }
+        catch
+        {
+            // Fallback menü
+            MenuItems.Add(new UrunViewModel { Id = 1, Ad = "Çay", Fiyat = 15 });
+            MenuItems.Add(new UrunViewModel { Id = 2, Ad = "Kahve", Fiyat = 35 });
+            MenuItems.Add(new UrunViewModel { Id = 3, Ad = "Kola", Fiyat = 40 });
+            MenuItems.Add(new UrunViewModel { Id = 4, Ad = "Su", Fiyat = 10 });
+            MenuItems.Add(new UrunViewModel { Id = 5, Ad = "Meyve Suyu", Fiyat = 30 });
+        }
+    }
+
+    private System.Collections.Generic.List<SharedLibrary.Models.Kampanya> _kampanyalar = new();
+    private int _kampanyaIndex = 0;
+    private DispatcherTimer _kampanyaTimer;
+    public event System.Action? OnKampanyaChanged;
+
+    [ObservableProperty]
+    private string _salonAdi = "Bilardo Salonu";
+
+    [ObservableProperty]
+    private string _telefon = "";
+
+    [ObservableProperty]
+    private string _adres = "";
+
+    [ObservableProperty]
+    private string _kampanyaBaslik = "Kampanya Yok";
+
+    [ObservableProperty]
+    private string _kampanyaAciklama = "";
+
+    [ObservableProperty]
+    private string _kampanyaFiyat = "";
+
+    private void LoadKampanyalar()
+    {
+        try
+        {
+            using var ctx = new ServerApplication.Data.AppDbContext();
+            _kampanyalar = ctx.Kampanyalar.Where(k => k.IsAktif).ToList();
+        }
+        catch { }
+
+        if (_kampanyalar.Any())
+        {
+            _kampanyaIndex = 0;
+            ApplyKampanya(_kampanyalar[_kampanyaIndex]);
+        }
+    }
+
+    private void RotateKampanya()
+    {
+        if (_kampanyalar.Count > 1)
+        {
+            _kampanyaIndex = (_kampanyaIndex + 1) % _kampanyalar.Count;
+            // UI animasyon tetiklemesi için
+            OnKampanyaChanged?.Invoke();
+            
+            // Animasyon süresi kadar gecikmeyle veriyi güncelle
+            System.Threading.Tasks.Task.Delay(500).ContinueWith(_ =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ApplyKampanya(_kampanyalar[_kampanyaIndex]);
+                });
+            });
+        }
+    }
+
+    private void ApplyKampanya(SharedLibrary.Models.Kampanya k)
+    {
+        KampanyaBaslik = $"🌟 {k.Baslik}";
+        KampanyaAciklama = k.Aciklama;
+        KampanyaFiyat = $"{k.Fiyat:N0} TL";
+    }
+
+    private void OnDemoExit()
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            _timer?.Stop();
+            _kioskService.StopKioskMode();
+
+            var roleWindow = new ServerApplication.Views.Common.RoleSelectionWindow();
+            roleWindow.Show();
+
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is ServerApplication.Views.Client.ClientWindow)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+        });
     }
 
     // ==================== DASHBOARD (PRE-MATCH) ====================
@@ -142,7 +270,7 @@ public partial class ClientViewModel : ObservableObject
         HandikapA = 0;
         HandikapB = 0;
         MasaNotu = string.Empty;
-        
+
         foreach (var item in MenuItems)
         {
             item.Adet = 0;
@@ -151,7 +279,7 @@ public partial class ClientViewModel : ObservableObject
     }
 
     // ==================== SCOREBOARD ====================
-    
+
     [ObservableProperty]
     private int _playerAScore = 0;
 
@@ -159,10 +287,10 @@ public partial class ClientViewModel : ObservableObject
     private int _playerBScore = 0;
 
     [ObservableProperty]
-    private int _activePlayer = 1; // 1 for Player A, 2 for Player B
+    private int _activePlayer = 1;
 
     [ObservableProperty]
-    private int _turCount = 1; // Innings count
+    private int _turCount = 1;
 
     [ObservableProperty]
     private int _playerAVisits = 0;
@@ -205,11 +333,9 @@ public partial class ClientViewModel : ObservableObject
     {
         if (ActivePlayer == 1)
         {
-            // Player A bitirdi
             PlayerAVisits++;
-            ActivePlayer = 2; // Sıra Player B'ye geçti
-            
-            // A ortalamasını hesapla
+            ActivePlayer = 2;
+
             if (PlayerAVisits > 0)
             {
                 double avg = (double)PlayerAScore / PlayerAVisits;
@@ -218,12 +344,10 @@ public partial class ClientViewModel : ObservableObject
         }
         else
         {
-            // Player B bitirdi
             PlayerBVisits++;
-            ActivePlayer = 1; // Sıra Player A'ya geçti
-            TurCount++; // Her ikisi de 1 kez oynadığı için tur arttı
+            ActivePlayer = 1;
+            TurCount++;
 
-            // B ortalamasını hesapla
             if (PlayerBVisits > 0)
             {
                 double avg = (double)PlayerBScore / PlayerBVisits;
@@ -233,7 +357,7 @@ public partial class ClientViewModel : ObservableObject
     }
 
     // ==================== CAFE POPUP ====================
-    
+
     [ObservableProperty]
     private bool _isCafePopupVisible = false;
 
@@ -271,6 +395,36 @@ public partial class ClientViewModel : ObservableObject
 
     public ObservableCollection<UrunViewModel> MenuItems { get; } = new();
 
+    // ==================== SİPARİŞ GÖNDERME ====================
+
+    [RelayCommand]
+    private async Task SiparisGonder()
+    {
+        var yeniSiparisler = MenuItems.Where(m => m.Adet > m.OnaylananAdet).ToList();
+        if (!yeniSiparisler.Any()) return;
+
+        var ozet = string.Join(", ", yeniSiparisler.Select(m => $"{m.Adet - m.OnaylananAdet}x {m.Ad}"));
+
+        if (_isDemoMode)
+        {
+            // Demo modunda direkt onayla
+            foreach (var item in yeniSiparisler)
+            {
+                item.OnaylananAdet = item.Adet;
+            }
+            return;
+        }
+
+        try
+        {
+            if (_hubConnection?.State == HubConnectionState.Connected)
+            {
+                await _hubConnection.InvokeAsync("SiparisGonder", _masaId, ozet);
+            }
+        }
+        catch { }
+    }
+
     // ==================== NETWORK ====================
 
     private async void ConnectToServerAsync()
@@ -298,10 +452,25 @@ public partial class ClientViewModel : ObservableObject
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                // TODO: İleride config.MasaId ile eşleşiyorsa sıfırla mantığı eklenebilir.
-                // Şimdilik gelen her sıfırlama komutunda bu ekranı sıfırlıyoruz.
-                ResetMatch();
+                if (masaId == _masaId)
+                {
+                    ResetMatch();
+                }
             });
+        });
+
+        _hubConnection.On<int>("SiparisOnaylandi", (masaId) =>
+        {
+            if (masaId == _masaId)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var item in MenuItems)
+                    {
+                        item.OnaylananAdet = item.Adet;
+                    }
+                });
+            }
         });
 
         _hubConnection.Closed += async (error) =>
@@ -311,7 +480,7 @@ public partial class ClientViewModel : ObservableObject
                 IsInvalidIp = true;
                 InvalidIpMessage = "Bağlantı koptu. Yeniden bağlanılıyor...";
             });
-            await Task.Delay(new Random().Next(0, 5) * 1000);
+            await Task.Delay(new System.Random().Next(0, 5) * 1000);
             await StartConnectionAsync();
         };
 
@@ -331,9 +500,9 @@ public partial class ClientViewModel : ObservableObject
                         IsInvalidIp = false;
                         InvalidIpMessage = "Sunucuya Arka Planda Bağlanılıyor...";
                     });
-                    
+
                     await _hubConnection.StartAsync();
-                    
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         InvalidIpMessage = "Sunucuya Bağlandı.";
@@ -389,9 +558,9 @@ public partial class ClientViewModel : ObservableObject
             {
                 await _hubConnection.DisposeAsync();
             }
-            
+
             _kioskService.StopKioskMode();
-            
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var roleWindow = new ServerApplication.Views.Common.RoleSelectionWindow();
@@ -411,20 +580,19 @@ public partial class ClientViewModel : ObservableObject
 
     private void Heartbeat()
     {
-        // Güncel saat (Dashboard için)
         CurrentDateTimeText = System.DateTime.Now.ToString("HH:mm:ss\ndd MMMM yyyy");
 
-        if (!IsMatchStarted) return; // Maç başlamadıysa süreyi ve tutarı artırma
+        if (!IsMatchStarted) return;
 
         var diff = System.DateTime.Now - StartTime;
         KalanSureText = $"Süre: {(int)diff.TotalHours:D2}:{diff.Minutes:D2}:{diff.Seconds:D2}";
-        
+
         decimal sureUcreti = (decimal)diff.TotalMinutes * (SaatlikUcret / 60.0m);
         ToplamTutar = sureUcreti + SiparisToplami;
 
-        if (_hubConnection?.State == HubConnectionState.Connected && diff.Seconds == 0)
+        if (!_isDemoMode && _hubConnection?.State == HubConnectionState.Connected && diff.Seconds == 0)
         {
-            _hubConnection.SendAsync("Heartbeat", ToplamTutar);
+            _hubConnection.SendAsync("MasaBilgisiGuncelle", _masaId, ToplamTutar, KalanSureText);
         }
     }
 }

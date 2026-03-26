@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WİNDOWS7_0_OR_GREATER
 C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ServerApplication\App.xaml
-5-536525932
+10-1143415942
 
-19-213077261
-370-1848429026
-MainWindow.xaml;Views\CheckoutWindow.xaml;Views\Client\ClientWindow.xaml;Views\Common\RoleSelectionWindow.xaml;Views\MasaControl.xaml;
+22-361707214
+3481458208828
+MainWindow.xaml;Views\BildirimlerWindow.xaml;Views\CheckoutWindow.xaml;Views\Client\ClientWindow.xaml;Views\Common\AdminPanelWindow.xaml;Views\Common\RoleSelectionWindow.xaml;Views\IslemGecmisiWindow.xaml;Views\MasaControl.xaml;Views\MenuWindow.xaml;Views\UrunSecimWindow.xaml;
 
 False
 

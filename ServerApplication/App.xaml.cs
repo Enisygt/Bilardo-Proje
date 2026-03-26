@@ -24,7 +24,6 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // Her zaman Rol Seçim ekranı açılacak
         var roleWindow = new ServerApplication.Views.Common.RoleSelectionWindow();
         roleWindow.Show();
     }

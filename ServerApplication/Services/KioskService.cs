@@ -17,6 +17,9 @@ public class KioskService : IDisposable
     private IntPtr _hookID = IntPtr.Zero;
 
     public event Action? AdminPanelRequested;
+    public event Action? DemoExitRequested;
+
+    public bool IsDemoMode { get; set; }
 
     public KioskService()
     {
@@ -54,6 +57,13 @@ public class KioskService : IDisposable
             bool alt = Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt);
             bool ctrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+
+            // ESC tuşu: Demo modunda tek basışla çıkış
+            if (key == Key.Escape && IsDemoMode)
+            {
+                DemoExitRequested?.Invoke();
+                return (IntPtr)1;
+            }
 
             if (ctrl && alt && shift && key == Key.F12)
             {

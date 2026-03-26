@@ -136,13 +136,17 @@
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding CurrentDateTimeText}" FontSize="36" FontWeight="Bold" Foreground="#2196F3" TextAlignment="Center" Margin="0,0,0,40"/>
                     <TextBlock Text="&#x1F3B1;" FontSize="50" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                    <TextBlock Text="MASA 1" FontSize="24" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                    <TextBlock Text="HAZIRLIK" FontSize="16" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,0,0,60"/>
-                    <Border Background="#1C2128" CornerRadius="12" Padding="15,12">
+                    <TextBlock Text="{Binding SalonAdi}" FontSize="24" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,5" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding Telefon}" FontSize="14" Foreground="#FF9800" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    <TextBlock Text="{Binding Adres}" FontSize="12" Foreground="#8899AA" HorizontalAlignment="Center" Margin="0,0,0,40" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <Border x:Name="KampanyaContainer" Background="#1C2128" CornerRadius="12" Padding="15,12" RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TranslateTransform x:Name="KampanyaTranslate" X="0" Y="0"/>
+                        </Border.RenderTransform>
                         <StackPanel>
-                            <TextBlock Text="&#x1F31F; KAMPANYA" FontSize="14" FontWeight="Bold" Foreground="#FFD700" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                            <TextBlock Text="3 Cay + 1 Kahve" FontSize="15" Foreground="White" HorizontalAlignment="Center"/>
-                            <TextBlock Text="70 TL" FontSize="28" FontWeight="ExtraBold" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                            <TextBlock Text="{Binding KampanyaBaslik}" FontSize="14" FontWeight="Bold" Foreground="#FFD700" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding KampanyaAciklama}" FontSize="15" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding KampanyaFiyat}" FontSize="28" FontWeight="ExtraBold" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

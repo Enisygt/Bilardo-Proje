@@ -8,6 +8,11 @@ public class AppConfig
 {
     public string Role { get; set; } = string.Empty; // "Master" or "Node"
     public string MasterIp { get; set; } = "127.0.0.1";
+    public int MasaId { get; set; } = 1;
+    public string SalonAdi { get; set; } = "Bilardo Salonu";
+    public string Telefon { get; set; } = "0555 555 55 55";
+    public string Adres { get; set; } = string.Empty;
+    public bool IsDemoMode { get; set; } = false;
 }
 
 public class ConfigurationService
