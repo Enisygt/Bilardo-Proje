@@ -1,4 +1,4 @@
-Hata (App.xaml.cs Demo Modu): ''System.Windows.StaticResourceExtension' öğesinde değer sağlama işlemi özel durum döndürdü.' Satır numarası '93' ve satır konumu '25'.
+Hata (Ana Makine): ''System.Windows.StaticResourceExtension' öğesinde değer sağlama işlemi özel durum döndürdü.' Satır numarası '95' ve satır konumu '33'.
 
 Stack Trace:
    at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
@@ -22,4 +22,4 @@ Stack Trace:
    at System.Windows.Window.CreateSourceWindow(Boolean duringShow)
    at System.Windows.Window.ShowHelper(Object booleanBox)
    at System.Windows.Window.Show()
-   at ServerApplication.App.OnStartup(StartupEventArgs e) in C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ServerApplication\App.xaml.cs:line 35
+   at ServerApplication.Views.Common.RoleSelectionWindow.BtnMaster_Click(Object sender, RoutedEventArgs e) in C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ServerApplication\Views\Common\RoleSelectionWindow.xaml.cs:line 40

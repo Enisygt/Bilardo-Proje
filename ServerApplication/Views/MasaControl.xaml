@@ -1,123 +1,120 @@
 <UserControl x:Class="ServerApplication.Views.MasaControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             MinHeight="160" Margin="4">
-    <UserControl.ContextMenu>
-        <ContextMenu x:Name="ctxMenu" Opened="ContextMenu_Opened">
-            <MenuItem x:Name="mnuBaslat" Header="▶ Manuel Başlat" Click="Menu_ManuelBaslat_Click" />
-            <MenuItem x:Name="mnuUrunEkle" Header="➕ Manuel Ürün Ekle" Click="Menu_ManuelUrunEkle_Click" />
-            <MenuItem x:Name="mnuSiparisOnayla" Header="✅ Sipariş Götürdüm" Click="Menu_SiparisOnayla_Click" />
-            <Separator/>
-            <MenuItem x:Name="mnuHesapKes" Header="💰 Hesap Kes" Click="Menu_ManuelBitir_Click" />
-        </ContextMenu>
-    </UserControl.ContextMenu>
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="220" d:DesignWidth="320">
 
-    <Border x:Name="CardBorder" 
-            BorderBrush="{Binding BorderColor, FallbackValue=#555555}" 
-            BorderThickness="2" CornerRadius="12" 
-            Background="{Binding BackgroundColor, FallbackValue=#2A2A2A}"
-            Cursor="Hand">
-        
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.3" Color="Black"/>
-        </Border.Effect>
+    <UserControl.Resources>
+        <!-- Kategoriye Göre Renk Atama -->
+        <Style x:Key="StatusIndicator" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Durum}" Value="Bos">
+                    <Setter Property="Background" Value="#238636"/> <!-- Yeşil -->
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Durum}" Value="Aktif">
+                    <Setter Property="Background" Value="#F85149"/> <!-- Kırmızı -->
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Durum}" Value="SiparisBekliyor">
+                    <Setter Property="Background" Value="#D29922"/> <!-- Turuncu -->
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
-        <Grid Margin="16,12">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Background" Value="#21262D"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#30363D"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
-            <!-- Masa No + Durum İkon -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="{Binding DurumIcon, FallbackValue='⚫'}" FontSize="16" 
-                           VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBlock Text="{Binding MasaNo, FallbackValue='Masa 1'}" 
-                           FontSize="22" FontWeight="Bold" Foreground="White"
-                           HorizontalAlignment="Center"/>
-            </StackPanel>
+    <Grid>
+        <!-- Minimalist Card Border -->
+        <Border x:Name="CardBorder" Background="#161B22" 
+                BorderBrush="#30363D" BorderThickness="1" CornerRadius="12">
+            <Border.ContextMenu>
+                <ContextMenu x:Name="ctxMenu" Opened="ContextMenu_Opened">
+                    <MenuItem x:Name="mnuBaslat" Header="▶ Masayı Başlat" Click="Menu_ManuelBaslat_Click" />
+                    <MenuItem x:Name="mnuUrunEkle" Header="🍕 Ürün Ekle" Click="Menu_ManuelUrunEkle_Click" />
+                    <MenuItem x:Name="mnuSiparisOnayla" Header="✅ Siparişi Onayla" Click="Menu_SiparisOnayla_Click" />
+                    <Separator/>
+                    <MenuItem x:Name="mnuHesapKes" Header="💰 Hesap Kes" Click="Menu_ManuelBitir_Click" Foreground="Red" FontWeight="Bold"/>
+                </ContextMenu>
+            </Border.ContextMenu>
 
-            <!-- Durum Text -->
-            <TextBlock Grid.Row="1" 
-                       Text="{Binding DurumText, FallbackValue='Boş'}" 
-                       FontSize="12" Foreground="#8899AA" 
-                       HorizontalAlignment="Center" Margin="0,2,0,6"/>
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Header -->
+                    <RowDefinition Height="*"/>    <!-- Center Info -->
+                    <RowDefinition Height="Auto"/> <!-- Footer -->
+                </Grid.RowDefinitions>
 
-            <!-- Oyuncu İsimleri (aktif masalar için) -->
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2">
-                <TextBlock FontSize="11" Foreground="#AABBCC" HorizontalAlignment="Center"
-                           TextTrimming="CharacterEllipsis">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} vs {1}">
-                            <Binding Path="PlayerAName"/>
-                            <Binding Path="PlayerBName"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding PlayerAName}" Value="">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </StackPanel>
+                <!-- Masa Başlığı ve Durum Işığı -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="MASA" FontSize="14" Foreground="#8B949E" VerticalAlignment="Bottom" Margin="0,0,8,4"/>
+                        <TextBlock Text="{Binding MasaId}" FontSize="32" FontWeight="Black" Foreground="White" VerticalAlignment="Bottom"/>
+                    </StackPanel>
 
-            <!-- Tutar -->
-            <TextBlock Grid.Row="3" 
-                       Text="{Binding ToplamBorc, StringFormat='₺ {0:N2}', FallbackValue='₺ 0.00'}" 
-                       FontSize="20" FontWeight="Bold" Foreground="#00E676" 
-                       HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    <Border Grid.Column="1" Width="14" Height="14" CornerRadius="7" 
+                            Style="{StaticResource StatusIndicator}" VerticalAlignment="Top" Margin="0,5,0,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="White" BlurRadius="4" Opacity="0.3" ShadowDepth="0"/>
+                        </Border.Effect>
+                    </Border>
+                </Grid>
 
-            <!-- Süre + Sipariş Bildirim -->
-            <Grid Grid.Row="4" Margin="0,4,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                <!-- Orta Alan: Süre ve Fiyat -->
+                <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding SureText}" FontSize="24" FontWeight="SemiBold" 
+                               Foreground="#C9D1D9" HorizontalAlignment="Center"/>
+                    <StackPanel x:Name="pnlOrders" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5"
+                                Visibility="{Binding HasPendingOrder, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="🔔" FontSize="18" Margin="0,0,5,0">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Onay bekleyen sipariş var!" Background="#1a1a1a" Foreground="White" BorderThickness="0"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                        <TextBlock Text="Yeni Sipariş" FontSize="16" FontWeight="SemiBold" Foreground="#D29922"/>
+                    </StackPanel>
+                </StackPanel>
 
-                <TextBlock Grid.Column="0" 
-                           Text="{Binding GecenSureText, FallbackValue='00:00'}" 
-                           FontSize="14" Foreground="#FF9800" 
-                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-                <!-- Sipariş Bekliyor Badge + ToolTip -->
-                <Border Grid.Column="1" CornerRadius="12" 
-                        Background="#FF9800" Padding="10,4"
-                        ToolTipService.ShowDuration="5000"
-                        VerticalAlignment="Center" Cursor="Hand"
-                        Visibility="{Binding HasPendingOrder, Converter={StaticResource BoolToVis}, 
-                                     FallbackValue=Collapsed}">
-                    <Border.ToolTip>
-                        <ToolTip Background="#2A2A4A" Foreground="White" BorderBrush="#FFAA00" BorderThickness="1">
-                            <TextBlock Text="{Binding BekleyenSiparis}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" MaxWidth="250" />
-                        </ToolTip>
-                    </Border.ToolTip>
-                    <TextBlock Text="💡" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasPendingOrder}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard>
-                                            <Storyboard RepeatBehavior="Forever">
-                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                 From="1" To="0.3" Duration="0:0:0.6"
-                                                                 AutoReverse="True"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
+                <!-- Alt Bar: Toplam Tutar -->
+                <Border Grid.Row="2" Background="#0D1117" CornerRadius="8" Padding="15,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="TOPLAM" FontSize="14" FontWeight="Bold" Foreground="#8B949E" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="{Binding ToplamTutar, StringFormat={}{0:N2} ₺}" 
+                                   FontSize="22" FontWeight="Black" Foreground="#58A6FF"/>
+                    </Grid>
                 </Border>
             </Grid>
-        </Grid>
-    </Border>
+        </Border>
+    </Grid>
 </UserControl>

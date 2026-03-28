@@ -157,7 +157,7 @@ public partial class ClientViewModel : ObservableObject
             // Animasyon süresi kadar gecikmeyle veriyi güncelle
             System.Threading.Tasks.Task.Delay(500).ContinueWith(_ =>
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current?.Dispatcher.Invoke(() =>
                 {
                     ApplyKampanya(_kampanyalar[_kampanyaIndex]);
                 });
@@ -174,7 +174,7 @@ public partial class ClientViewModel : ObservableObject
 
     private void OnDemoExit()
     {
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current?.Dispatcher.Invoke(() =>
         {
             _timer?.Stop();
             _kioskService.StopKioskMode();
@@ -182,12 +182,15 @@ public partial class ClientViewModel : ObservableObject
             var roleWindow = new ServerApplication.Views.Common.RoleSelectionWindow();
             roleWindow.Show();
 
-            foreach (Window window in Application.Current.Windows)
+            if (Application.Current != null)
             {
-                if (window is ServerApplication.Views.Client.ClientWindow)
+                foreach (Window window in Application.Current.Windows)
                 {
-                    window.Close();
-                    break;
+                    if (window is ServerApplication.Views.Client.ClientWindow)
+                    {
+                        window.Close();
+                        break;
+                    }
                 }
             }
         });
@@ -212,9 +215,21 @@ public partial class ClientViewModel : ObservableObject
     partial void OnPlayerANameChanged(string value) => OnPropertyChanged(nameof(DisplayPlayerAName));
     partial void OnPlayerBNameChanged(string value) => OnPropertyChanged(nameof(DisplayPlayerBName));
 
-    // Hedef Sayı (Target Score)
     [ObservableProperty]
     private int _hedefSayi = 25;
+
+    // High Run tracking
+    [ObservableProperty]
+    private int _playerAHighRun1 = 0;
+    [ObservableProperty]
+    private int _playerAHighRun2 = 0;
+    [ObservableProperty]
+    private int _playerBHighRun1 = 0;
+    [ObservableProperty]
+    private int _playerBHighRun2 = 0;
+
+    private int _playerAScoreAtTurnStart = 0;
+    private int _playerBScoreAtTurnStart = 0;
 
     [RelayCommand]
     private void HedefSayiUp() => HedefSayi += 5;
@@ -247,6 +262,8 @@ public partial class ClientViewModel : ObservableObject
     {
         IsMatchStarted = true;
         StartTime = System.DateTime.Now;
+        _playerAScoreAtTurnStart = PlayerAScore;
+        _playerBScoreAtTurnStart = PlayerBScore;
         Heartbeat();
     }
 
@@ -276,6 +293,13 @@ public partial class ClientViewModel : ObservableObject
             item.Adet = 0;
             item.OnaylananAdet = 0;
         }
+
+        PlayerAHighRun1 = 0;
+        PlayerAHighRun2 = 0;
+        PlayerBHighRun1 = 0;
+        PlayerBHighRun2 = 0;
+        _playerAScoreAtTurnStart = 0;
+        _playerBScoreAtTurnStart = 0;
     }
 
     // ==================== SCOREBOARD ====================
@@ -333,25 +357,63 @@ public partial class ClientViewModel : ObservableObject
     {
         if (ActivePlayer == 1)
         {
+            int turnScore = PlayerAScore - _playerAScoreAtTurnStart;
+            UpdateHighRunStatus(turnScore, true);
+
             PlayerAVisits++;
             ActivePlayer = 2;
+            _playerBScoreAtTurnStart = PlayerBScore;
 
             if (PlayerAVisits > 0)
             {
                 double avg = (double)PlayerAScore / PlayerAVisits;
-                PlayerAAverageText = $"Istaka: {PlayerAVisits}   Ort: {avg:F2}";
+                PlayerAAverageText = $"Istaka: {PlayerAVisits}  Ort: {avg:F2}";
             }
         }
         else
         {
+            int turnScore = PlayerBScore - _playerBScoreAtTurnStart;
+            UpdateHighRunStatus(turnScore, false);
+
             PlayerBVisits++;
             ActivePlayer = 1;
             TurCount++;
+            _playerAScoreAtTurnStart = PlayerAScore;
 
             if (PlayerBVisits > 0)
             {
                 double avg = (double)PlayerBScore / PlayerBVisits;
-                PlayerBAverageText = $"Istaka: {PlayerBVisits}   Ort: {avg:F2}";
+                PlayerBAverageText = $"Istaka: {PlayerBVisits}  Ort: {avg:F2}";
+            }
+        }
+    }
+
+    private void UpdateHighRunStatus(int currentRun, bool isPlayerA)
+    {
+        if (currentRun <= 0) return;
+
+        if (isPlayerA)
+        {
+            if (currentRun > PlayerAHighRun1)
+            {
+                PlayerAHighRun2 = PlayerAHighRun1;
+                PlayerAHighRun1 = currentRun;
+            }
+            else if (currentRun > PlayerAHighRun2 && currentRun != PlayerAHighRun1)
+            {
+                PlayerAHighRun2 = currentRun;
+            }
+        }
+        else
+        {
+            if (currentRun > PlayerBHighRun1)
+            {
+                PlayerBHighRun2 = PlayerBHighRun1;
+                PlayerBHighRun1 = currentRun;
+            }
+            else if (currentRun > PlayerBHighRun2 && currentRun != PlayerBHighRun1)
+            {
+                PlayerBHighRun2 = currentRun;
             }
         }
     }
@@ -441,7 +503,7 @@ public partial class ClientViewModel : ObservableObject
 
         _hubConnection.On<string>("TerminalVerified", (masaNo) =>
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current?.Dispatcher.Invoke(() =>
             {
                 IsInvalidIp = false;
                 InvalidIpMessage = string.Empty;
@@ -450,7 +512,7 @@ public partial class ClientViewModel : ObservableObject
 
         _hubConnection.On<int>("ResetMatch", (masaId) =>
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current?.Dispatcher.Invoke(() =>
             {
                 if (masaId == _masaId)
                 {
@@ -463,7 +525,7 @@ public partial class ClientViewModel : ObservableObject
         {
             if (masaId == _masaId)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current?.Dispatcher.Invoke(() =>
                 {
                     foreach (var item in MenuItems)
                     {
