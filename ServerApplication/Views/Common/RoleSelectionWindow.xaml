@@ -1,0 +1,103 @@
+<Window x:Class="ServerApplication.Views.Common.RoleSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bilardo Salonu — Kurulum" Height="500" Width="550" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#1A1A2E">
+
+    <Window.Resources>
+        <Style x:Key="RoleButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="400" Margin="20">
+            
+            <!-- Logo / Başlık -->
+            <TextBlock Text="🎱" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+            <TextBlock Text="Bilardo Salonu Yönetim" FontSize="26" FontWeight="Bold" 
+                       Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+            <TextBlock Text="Cihazın rolünü seçin" FontSize="14" Foreground="#8899AA" 
+                       HorizontalAlignment="Center" Margin="0,0,0,28"/>
+
+            <!-- Ana Makine (Kasa) Butonu -->
+            <Button x:Name="btnMaster" Style="{StaticResource RoleButton}" 
+                    Background="#2E7D32" Click="BtnMaster_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🖥  " FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Ana Makine (Kasa / Server)" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Masa Terminali Butonu -->
+            <Button x:Name="btnNode" Style="{StaticResource RoleButton}" 
+                    Background="#1565C0" Click="BtnNode_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="📱  " FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Masa Terminali (Client)" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Demo Modu Butonu -->
+            <Button x:Name="btnDemo" Style="{StaticResource RoleButton}" 
+                    Background="#E65100" Click="BtnDemo_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🎮  " FontSize="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Demo Modu (Simülasyon)" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <!-- IP Giriş Paneli -->
+            <StackPanel x:Name="pnlIpEntry" Visibility="Collapsed" Margin="0,20,0,0">
+                <TextBlock Text="Ana Makinenin IP Adresini Girin:" Foreground="#8899AA" 
+                           Margin="0,0,0,6" FontSize="13"/>
+                <TextBox x:Name="txtMasterIp" FontSize="16" Padding="10,8" 
+                         Background="#2A2A4A" Foreground="White" BorderBrush="#444466" 
+                         BorderThickness="1"/>
+                <Button Content="🚀 Kaydet ve Başlat" Style="{StaticResource RoleButton}" 
+                        Background="#FF9800" Click="BtnSaveNode_Click" Margin="0,12,0,0"/>
+            </StackPanel>
+
+            <!-- Masa No Seçim Paneli -->
+            <StackPanel x:Name="pnlMasaNo" Visibility="Collapsed" Margin="0,12,0,0">
+                <TextBlock Text="Masa Numarası:" Foreground="#8899AA" Margin="0,0,0,6" FontSize="13"/>
+                <ComboBox x:Name="cmbMasaNo" FontSize="16" Padding="8,6" 
+                          Background="#2A2A4A" Foreground="Black" SelectedIndex="0">
+                    <ComboBoxItem Content="Masa 1"/>
+                    <ComboBoxItem Content="Masa 2"/>
+                    <ComboBoxItem Content="Masa 3"/>
+                    <ComboBoxItem Content="Masa 4"/>
+                    <ComboBoxItem Content="Masa 5"/>
+                    <ComboBoxItem Content="Masa 6"/>
+                    <ComboBoxItem Content="Masa 7"/>
+                    <ComboBoxItem Content="Masa 8"/>
+                    <ComboBoxItem Content="Masa 9"/>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

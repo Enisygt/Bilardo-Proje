@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "DwCk4r9Bxp0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\KENT\\Desktop\\Bilardo-Proje-main\\SharedLibrary\\SharedLibrary.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\KENT\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}

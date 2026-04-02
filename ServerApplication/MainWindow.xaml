@@ -1,0 +1,164 @@
+<Window x:Class="ServerApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:ServerApplication.Views"
+        Title="Bilardo Salonu — Kasa" 
+        WindowState="Maximized" WindowStyle="None"
+        Background="#0D1117"
+        PreviewKeyDown="Window_PreviewKeyDown">
+    
+    <Window.Resources>
+        <!-- Modern minimalist button style -->
+        <Style x:Key="SidebarButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#8899AA"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,15"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Margin="5,2" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1C2128"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#21262D"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <Border Grid.Column="0" Background="#161B22" BorderBrush="#30363D" BorderThickness="0,0,1,0">
+            <Grid Margin="10,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Logo -->
+                    <RowDefinition Height="*"/>    <!-- Navigasyon -->
+                    <RowDefinition Height="Auto"/> <!-- Bilgi Paneli -->
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="15,0,0,40">
+                    <TextBlock Text="🎱" FontSize="44" Margin="0,0,0,10"/>
+                    <TextBlock Text="BİLARDO" FontSize="26" FontWeight="Black" Foreground="White"/>
+                    <TextBlock Text="YÖNETİM" FontSize="16" Foreground="#58A6FF" FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1">
+                    <Button Style="{StaticResource SidebarButton}" Command="{Binding SaveCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="💾" Margin="0,0,15,0"/>
+                            <TextBlock Text="Kaydet" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SidebarButton}" Command="{Binding SiparisleriGosterCommand}"
+                            Visibility="{Binding HasNotification, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔔" Margin="0,0,15,0"/>
+                            <TextBlock Text="Bildirimler" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SidebarButton}" Command="{Binding IslemGecmisiGosterCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📊" Margin="0,0,15,0"/>
+                            <TextBlock Text="Geçmiş" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SidebarButton}" Command="{Binding MenuGosterCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋" Margin="0,0,15,0"/>
+                            <TextBlock Text="Menü" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource SidebarButton}" Command="{Binding AdminPanelCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⚙" Margin="0,0,15,0"/>
+                            <TextBlock Text="Ayarlar" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator Background="#30363D" Margin="10,20"/>
+                    <Button Style="{StaticResource SidebarButton}" Click="BtnMainMenu_Click" Foreground="#FF7B72">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🚪" Margin="0,0,15,0"/>
+                            <TextBlock Text="Çıkış" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Margin="15,0,0,10">
+                    <TextBlock Text="{Binding SaatText}" FontSize="38" FontWeight="Bold" Foreground="White" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding TarihText}" FontSize="16" Foreground="#8B949E" Margin="0,0,0,20" TextWrapping="Wrap"/>
+                    
+                    <Border Background="#1C2128" CornerRadius="8" Padding="12,10" Margin="0,0,15,20">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SalonAdi}" FontSize="16" FontWeight="Bold" Foreground="#58A6FF" Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding Telefon}" FontSize="14" Foreground="#8B949E"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ==================== ANA İÇERİK ==================== -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Demo Badge -->
+            <Border Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20,30,0"
+                    Background="#D73A49" CornerRadius="8" Padding="20,8"
+                    Visibility="{Binding IsDemoMode, Converter={StaticResource BoolToVis}}">
+                <TextBlock Text="🎮 DEMO MODU — ESC ile çık" FontSize="14" FontWeight="Bold" Foreground="White"/>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                          Margin="30,30,30,10">
+                <ItemsControl ItemsSource="{Binding Masalar}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:MasaControl Margin="10"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" Background="#161B22" BorderBrush="#30363D" BorderThickness="0,1,0,0" Padding="30,15" Margin="30,0,30,20" CornerRadius="12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="🎯 KAMPANYALAR" FontSize="16" FontWeight="Bold" 
+                               Foreground="#FFD700" VerticalAlignment="Center" Margin="0,0,25,0"/>
+                    <TextBlock Grid.Column="1" Text="{Binding KampanyaBannerText}" FontSize="16" 
+                               Foreground="#C9D1D9" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

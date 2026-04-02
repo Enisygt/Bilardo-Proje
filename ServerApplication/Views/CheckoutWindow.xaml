@@ -1,0 +1,187 @@
+<Window x:Class="ServerApplication.Views.CheckoutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Hesap Kesim" Height="600" Width="500" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#1A1A2E">
+    
+    <Window.Resources>
+        
+        <Style x:Key="QuickDiscountBtn" TargetType="Button">
+            <Setter Property="Background" Value="#2A2A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#444466"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="6" Padding="{TemplateBinding Padding}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#3A3A6A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Masa Başlık -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="{Binding MasaNo, StringFormat='💰 {0} — Hesap Kesim'}" 
+                       FontSize="22" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="{Binding SureText}" FontSize="13" Foreground="#8899AA" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Ara Toplam -->
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Süre Ücreti:" FontSize="14" Foreground="#AABBCC"/>
+            <TextBlock Grid.Column="1" Text="{Binding AraToplam, StringFormat='₺ {0:N2}'}" 
+                       FontSize="14" Foreground="White" FontWeight="SemiBold"/>
+        </Grid>
+
+        <!-- Sipariş Toplam -->
+        <Grid Grid.Row="2" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Sipariş Ücreti:" FontSize="14" Foreground="#AABBCC"/>
+            <TextBlock Grid.Column="1" Text="{Binding SiparisToplam, StringFormat='₺ {0:N2}'}" 
+                       FontSize="14" Foreground="White" FontWeight="SemiBold"/>
+        </Grid>
+
+        <Border Grid.Row="3" BorderBrush="#333355" BorderThickness="0,1,0,0" Margin="0,0,0,12"/>
+
+        <!-- Yönetici Şifre -->
+        <Grid Grid.Row="4" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Yönetici Şifresi:" FontSize="13" Foreground="#8899AA" VerticalAlignment="Center"/>
+            <PasswordBox Grid.Column="1" x:Name="txtPassword" PasswordChanged="txtPassword_PasswordChanged"
+                         FontSize="14" Padding="8,6" Background="#2A2A4A" Foreground="White" 
+                         BorderBrush="#444466" BorderThickness="1"/>
+        </Grid>
+
+        <!-- Yüzde İndirim Quick Buttons -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,0,0,8"
+                    Visibility="{Binding IsDiscountEnabled, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="İndirim:" FontSize="13" Foreground="#8899AA" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <Button Content="%5" Style="{StaticResource QuickDiscountBtn}" 
+                    Command="{Binding YuzdeIndirimCommand}" CommandParameter="5"/>
+            <Button Content="%10" Style="{StaticResource QuickDiscountBtn}" 
+                    Command="{Binding YuzdeIndirimCommand}" CommandParameter="10"/>
+            <Button Content="%15" Style="{StaticResource QuickDiscountBtn}" 
+                    Command="{Binding YuzdeIndirimCommand}" CommandParameter="15"/>
+            <Button Content="%20" Style="{StaticResource QuickDiscountBtn}" 
+                    Command="{Binding YuzdeIndirimCommand}" CommandParameter="20"/>
+            <Button Content="Sıfırla" Style="{StaticResource QuickDiscountBtn}" Background="#4A1A1A"
+                    Command="{Binding YuzdeIndirimCommand}" CommandParameter="0"/>
+        </StackPanel>
+
+        <!-- Manuel İndirim Tutarı -->
+        <Grid Grid.Row="6" Margin="0,0,0,8"
+              Visibility="{Binding IsDiscountEnabled, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Manuel Düzeltme:" FontSize="13" Foreground="#8899AA" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1" Text="{Binding ManuelDuzeltmeText, UpdateSourceTrigger=PropertyChanged}" 
+                     FontSize="14" Padding="8,6" Background="#2A2A4A" Foreground="White"
+                     BorderBrush="#444466" BorderThickness="1"/>
+        </Grid>
+
+        <!-- İndirim Bilgi -->
+        <Grid Grid.Row="7" Margin="0,0,0,8"
+              Visibility="{Binding IsDiscountEnabled, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding IndirimAciklama}" FontSize="12" Foreground="#FF9800"/>
+            <TextBlock Grid.Column="1" Text="{Binding ToplamIndirim, StringFormat='-₺ {0:N2}'}" 
+                       FontSize="14" Foreground="#FF9800" FontWeight="SemiBold"/>
+        </Grid>
+
+        <Border Grid.Row="8" BorderBrush="#333355" BorderThickness="0,1,0,0" Margin="0,8,0,8"/>
+
+        <!-- ÖDENECEK TUTAR -->
+        <Grid Grid.Row="9" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="ÖDENECEK TUTAR:" FontSize="18" FontWeight="Bold" Foreground="#00E5FF" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding ToplamTutar, StringFormat='₺ {0:N2}'}" 
+                       FontSize="28" FontWeight="Bold" Foreground="#00E676"/>
+        </Grid>
+
+        <!-- Ödeme Butonları -->
+        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="💵 NAKİT" Command="{Binding OdemeYapCommand}" CommandParameter="Nakit" 
+                    Click="Payment_Click" Width="140" Height="50" FontSize="16" FontWeight="Bold"
+                    Background="#2E7D32" Foreground="White" BorderThickness="0" Cursor="Hand" Margin="0,0,12,0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#388E3C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Content="💳 KART" Command="{Binding OdemeYapCommand}" CommandParameter="Kredi Karti" 
+                    Click="Payment_Click" Width="140" Height="50" FontSize="16" FontWeight="Bold"
+                    Background="#1565C0" Foreground="White" BorderThickness="0" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1976D2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,25 @@
+Hata (Ana Makine): ''System.Windows.StaticResourceExtension' öğesinde değer sağlama işlemi özel durum döndürdü.' Satır numarası '95' ve satır konumu '33'.
+
+Stack Trace:
+   at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.XamlReader.RewrapException(Exception e, Uri baseUri)
+   at System.Windows.FrameworkTemplate.LoadTemplateXaml(XamlReader templateReader, XamlObjectWriter currentWriter)
+   at System.Windows.FrameworkTemplate.LoadOptimizedTemplateContent(DependencyObject container, IComponentConnector componentConnector, IStyleConnector styleConnector, List`1 affectedChildren, UncommonField`1 templatedNonFeChildrenField)
+   at System.Windows.FrameworkTemplate.LoadContent(DependencyObject container, List`1 affectedChildren)
+   at System.Windows.StyleHelper.ApplyTemplateContent(UncommonField`1 dataField, DependencyObject container, FrameworkElementFactory templateRoot, Int32 lastChildIndex, HybridDictionary childIndexFromChildID, FrameworkTemplate frameworkTemplate)
+   at System.Windows.FrameworkTemplate.ApplyTemplateContent(UncommonField`1 templateDataField, FrameworkElement container)
+   at System.Windows.FrameworkElement.ApplyTemplate()
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.Controls.Primitives.UniformGrid.MeasureOverride(Size constraint)
+   at System.Windows.FrameworkElement.MeasureCore(Size availableSize)
+   at System.Windows.UIElement.Measure(Size availableSize)
+   at System.Windows.ContextLayoutManager.UpdateLayout()
+   at System.Windows.Interop.HwndSource.SetLayoutSize()
+   at System.Windows.Interop.HwndSource.set_RootVisualInternal(Visual value)
+   at System.Windows.Window.SetRootVisualAndUpdateSTC()
+   at System.Windows.Window.SetupInitialState(Double requestedTop, Double requestedLeft, Double requestedWidth, Double requestedHeight)
+   at System.Windows.Window.CreateSourceWindow(Boolean duringShow)
+   at System.Windows.Window.ShowHelper(Object booleanBox)
+   at System.Windows.Window.Show()
+   at ServerApplication.Views.Common.RoleSelectionWindow.BtnMaster_Click(Object sender, RoutedEventArgs e) in C:\Users\enisz\OneDrive\Desktop\Bilardo Proje\Bilardo-Proje\ServerApplication\Views\Common\RoleSelectionWindow.xaml.cs:line 40

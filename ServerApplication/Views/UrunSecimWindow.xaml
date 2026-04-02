@@ -1,0 +1,92 @@
+<Window x:Class="ServerApplication.Views.UrunSecimWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="➕ Ürün Seçimi" Height="500" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#1A1A2E">
+
+    <Window.Resources>
+        <Style x:Key="UrunBtn" TargetType="Button">
+            <Setter Property="Background" Value="#2A2A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="4,3"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#3A3A6A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Başlık -->
+        <TextBlock Grid.Row="0" Text="Ürün seçin ve masaya ekleyin" 
+                   FontSize="18" FontWeight="Bold" Foreground="White" 
+                   Margin="0,0,0,12"/>
+
+        <!-- Ürün Listesi -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="pnlUrunler"/>
+        </ScrollViewer>
+
+        <!-- Alt Butonlar -->
+        <StackPanel Grid.Row="2" Margin="0,12,0,0">
+            <TextBlock x:Name="txtSecimOzet" FontSize="13" Foreground="#00E676" 
+                       Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="✅ Ekle" Width="120" Height="40" FontSize="15" FontWeight="Bold"
+                        Background="#2E7D32" Foreground="White" Click="BtnEkle_Click" Cursor="Hand" Margin="0,0,8,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#388E3C"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Content="❌ İptal" Width="120" Height="40" FontSize="15" FontWeight="Bold"
+                        Background="#C62828" Foreground="White" Click="BtnIptal_Click" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#D32F2F"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
